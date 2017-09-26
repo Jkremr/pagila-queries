@@ -218,6 +218,7 @@ GROUP BY
   film.film_id
   ,film.title
 ORDER BY COUNT(film.film_id) DESC
+;
 ```
 
 *There are six copies of Hunchback Impossible in the inventory system.*
@@ -227,35 +228,223 @@ ORDER BY COUNT(film.film_id) DESC
 6e. Using the tables payment and customer and the JOIN command, list the total paid by each customer. List the customers alphabetically by last name.
 
 ```sql
-
+SELECT
+  payment.customer_id
+  ,customer.first_name
+  ,customer.last_name
+  ,SUM(payment.amount)
+FROM payment
+  INNER JOIN customer ON payment.customer_id = customer.customer_id
+GROUP BY
+  payment.customer_id
+  ,customer.first_name
+  ,customer.last_name
+ORDER BY customer.last_name
+;
 ```
+
+
 
 7a. The music of Queen and Kris Kristofferson have seen an unlikely resurgence. As an unintended consequence, films starting with the letters K and Q have also soared in popularity. display the titles of movies starting with the letters K and Q whose language is English.
 
 ```sql
-
+SELECT
+  film.film_id
+  ,film.title
+  ,film.language_id
+  ,language.name
+FROM film
+  LEFT JOIN language ON film.language_id = language.language_id
+WHERE language.name = 'English'
+      AND (film.title ILIKE 'k%' OR film.title ILIKE 'q%')
+ORDER BY film.title
+;
 ```
+
+
 
 7b. Use subqueries to display all actors who appear in the film Alone Trip.
 
 ```sql
+SELECT
+  actor.actor_id
+  ,actor.first_name
+  ,actor.last_name
+FROM actor
+WHERE actor_id IN (
+  SELECT film_actor.actor_id
+  FROM film_actor
+    INNER JOIN film ON film_actor.film_id = film.film_id
+  WHERE film.title ILIKE 'alone trip'
+)
+ORDER BY actor.actor_id
+;
 
+--Yields the same results as:
+
+SELECT
+  actor.actor_id
+  , actor.first_name
+  , actor.last_name
+FROM actor
+  INNER JOIN film_actor ON actor.actor_id = film_actor.actor_id
+  INNER JOIN film ON film_actor.film_id = film.film_id
+WHERE Film.title ILIKE 'alone trip'
+ORDER BY actor.actor_id
+;
 ```
+
+
 
 7c. You want to run an email marketing campaign in Canada, for which you will need the names and email addresses of all Canadian customers. Use joins to retrieve this information.
 
-7d. Sales have been lagging among young families, and you wish to target all family movies for a promotion. Identify all movies categorized as a family film.Now we mentioned family film, but there is no family film category. There’s a category that resembles that. In the real world nothing will be exact.
+```sql
+SELECT
+  customer.first_name
+  ,customer.last_name
+  ,customer.email
+FROM customer
+  INNER JOIN address ON customer.address_id = address.address_id
+  INNER JOIN city ON address.city_id = city.city_id
+  INNER JOIN country ON city.country_id = country.country_id
+WHERE country ILIKE 'Canada'
+;
+```
+
+*There are five customers in Canada.*
+
+
+
+7d. Sales have been lagging among young families, and you wish to target all family movies for a promotion. Identify all movies categorized as a family films.
+
+```sql
+SELECT
+   film.title    AS film_title
+  ,category.name AS film_category
+FROM film
+  INNER JOIN film_category ON film.film_id = film_category.film_id
+  INNER JOIN category ON film_category.category_id = category.category_id
+WHERE category.name ILIKE 'family%'
+;
+```
+
+
 
 7e. Display the most frequently rented movies in descending order.
 
+```sql
+SELECT
+  film.title
+  ,film.film_id
+  ,COUNT(rental.rental_id) AS rentals_ltd
+FROM rental
+  INNER JOIN inventory ON rental.inventory_id = inventory.inventory_id
+  INNER JOIN film ON inventory.film_id = film.film_id
+GROUP BY film.title
+  ,film.film_id
+ORDER BY COUNT(rental.rental_id) DESC
+;
+```
+
+*The most frequently rented movie is "Bucket Brotherhood" with 34 rentals.*
+
+
+
 7f. Write a query to display how much business, in dollars, each store brought in.
+
+```sql
+SELECT
+  store.store_id
+  ,city.city
+  ,SUM(payment.amount) AS gross_store_receipts
+FROM rental
+  INNER JOIN inventory ON rental.inventory_id = inventory.inventory_id
+  -- It is safe to assume that inventory_id and store_id combinations are unique.
+  INNER JOIN payment ON rental.rental_id = payment.rental_id
+  INNER JOIN store ON inventory.store_id = store.store_id
+  INNER JOIN address ON store.address_id = address.address_id
+  INNER JOIN city ON address.city_id = city.city_id
+GROUP BY store.store_id
+  ,city.city
+;
+```
+
+The Woodridge store brought in $33,726.00 of business compared to $33,689.00 for the Lethbridge store.*
+
+
 
 7g. Write a query to display for each store its store ID, city, and country.
 
+```sql
+SELECT
+  store.store_id
+  ,city.city
+  ,country.country
+FROM store
+  INNER JOIN address ON store.address_id = address.address_id
+  INNER JOIN city ON address.city_id = city.city_id
+  INNER JOIN country ON city.country_id = country.country_id
+;
+```
+
+
+
 7h. List the top five genres in gross revenue in descending order. 
+
+```sql
+SELECT
+  category.name
+  ,SUM(payment.amount)
+FROM rental
+  INNER JOIN inventory ON rental.inventory_id = inventory.inventory_id
+  INNER JOIN payment ON rental.rental_id = payment.rental_id
+  INNER JOIN film ON inventory.film_id = film.film_id
+  INNER JOIN film_category ON film.film_id = film_category.film_id
+  INNER JOIN category ON film_category.category_id = category.category_id
+GROUP BY category.name
+ORDER BY SUM(payment.amount) DESC
+LIMIT 5
+;
+```
+
+*The top five grossing film categories in descending order are Sports, Sci-Fi, Animation, Drama, and Comedy.*
+
+
 
 8a. In your new role as an executive, you would like to have an easy way of viewing the Top five genres by gross revenue. Use the solution from the problem above to create a view. 
 
+```sql
+CREATE OR REPLACE VIEW top_five_grossing_cat AS
+  SELECT
+    category.name
+    ,SUM(payment.amount)
+  FROM rental
+    INNER JOIN inventory ON rental.inventory_id = inventory.inventory_id
+    INNER JOIN payment ON rental.rental_id = payment.rental_id
+    INNER JOIN film ON inventory.film_id = film.film_id
+    INNER JOIN film_category ON film.film_id = film_category.film_id
+    INNER JOIN category ON film_category.category_id = category.category_id
+  GROUP BY category.name
+  ORDER BY SUM(payment.amount) DESC
+  LIMIT 5
+;
+```
+
+
+
 8b. How would you display the view that you created in 8a
 
+```sql
+SELECT * FROM top_five_grossing_cat
+;
+```
+
+
+
 8c. You find that you no longer need the view top_five_genres. Write a query to delete it.
+
+```sql
+DROP VIEW top_five_grossing_cat
+;
+```
+
