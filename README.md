@@ -1,6 +1,6 @@
 # Pagila queries
 
-1a. maiList of all the actors’ first name and last name. Display the first and last name of each actor in a single column in upper case letters. Name the column Actor Name.
+1a. Create a list of all the actors’ first name and last name. Display the first and last name of each actor in a single column in upper case letters. Name the column Actor Name.
 
 ```sql
 SELECT first_name || ' ' || last_name AS "Actor Name"
@@ -8,7 +8,17 @@ FROM actor
 ;
 ```
 
+
+
 1b. Display the first and last name of each actor in a single column in upper case letters. Name the column Actor Name
+
+```sql
+SELECT first_name || ' ' || last_name AS "Actor Name"
+FROM actor
+;
+```
+
+
 
 2a. Find the id, first name, and last name of an actor, of whom you know only the first name of "Joe."
 
@@ -36,7 +46,9 @@ WHERE last_name ILIKE '%gen%'
 ;
 ```
 
-/*2c. Find all actors whose last names contain the letters LI. This time, order the rows by last name and first name, in that order. Make this case insensitive.*/
+
+
+2c. Find all actors whose last names contain the letters LI. This time, order the rows by last name and first name, in that order. Make this case insensitive.
 
 ```sql
 SELECT
@@ -50,7 +62,9 @@ ORDER BY last_name
 ;
 ```
 
-/*2d. Using IN, display the country_id and country columns of the following countries: Afghanistan, Bangladesh, and China:*/
+
+
+2d. Using IN, display the country_id and country columns of the following countries: Afghanistan, Bangladesh, and China:
 
 ```sql
 SELECT *
@@ -59,7 +73,9 @@ WHERE country IN ('Afghanistan','Bangladesh','China')
 ;
 ```
 
-/*3a. Add a middle_name column to the table actor. Specify the appropriate column type*/
+
+
+3a. Add a middle_name column to the table actor. Specify the appropriate column type
 
 ```sql
 ALTER TABLE actor
@@ -76,6 +92,8 @@ LIMIT 5
 ;
 ```
 
+
+
 3b. You realize that some of these actors have tremendously long last names. Change the data type of the middle_name column to something that can hold more than varchar.
 
 ```sql
@@ -89,7 +107,10 @@ LIMIT 5
 ;
 ```
 
+
+
 3c. Remove the middle_name column.
+
 ```sql
 ALTER TABLE actor
   DROP COLUMN middle_name
@@ -100,6 +121,8 @@ FROM actor
 LIMIT 5
 ;
 ```
+
+
 
 4a. List the last names of actors, as well as how many actors have that last name.
 
@@ -113,6 +136,8 @@ ORDER BY last_name_count DESC
 ;
 ```
 
+
+
 4b. List last names of actors and the number of actors who have that last name, but only for names that are shared by at least two actors
 
 ```sql
@@ -125,6 +150,8 @@ HAVING COUNT(last_name) >= 2
 ORDER BY last_name_count DESC
 ;
 ```
+
+
 
 4c. Set GROUCHO WILLIAMS record so that the first name is HARPO.
 
@@ -142,6 +169,8 @@ WHERE last_name = 'WILLIAMS'
 ;
 ```
 
+
+
 4d. Set GROUCHO WILLIAMS first name back to GROUCHO from HARPO.
 
 ```sql
@@ -158,6 +187,8 @@ WHERE last_name = 'WILLIAMS'
 ;
 ```
 
+
+
 6a. Use a JOIN to display the first and last names, as well as the address, of each staff member. Use the tables staff and address:
 
 ```sql
@@ -169,6 +200,8 @@ FROM staff
   INNER JOIN address ON address.address_id = staff.address_id
 ;
 ```
+
+
 
 6b. Use a JOIN to display the total amount rung up by each staff member in January of 2007. Use tables staff and payment.
 
@@ -186,6 +219,8 @@ GROUP BY
 ORDER BY SUM(payment.amount)
 ;
 ```
+
+
 6c. List each film and the number of actors who are listed for that film. 
 
 ```sql
@@ -369,7 +404,7 @@ GROUP BY store.store_id
 ;
 ```
 
-The Woodridge store brought in $33,726.00 of business compared to $33,689.00 for the Lethbridge store.*
+The Woodridge store brought in $33,726.00 of business compared to $33,689.00 for the Lethbridge store.
 
 
 
