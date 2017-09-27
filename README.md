@@ -187,6 +187,67 @@ WHERE last_name = 'WILLIAMS'
 ;
 ```
 
+5a. What’s the difference between a left join and a right join. 
+
+*Both are outer joins, in the sense that they will return at least one of the joined tables in its entirety. A left (outer) join will include all records from the left table, and the records from the right table that meet the ON condition. A right (outer) join will include all records from the right table, and the records from the left table that meet the ON condition*.
+
+
+
+5b. What about an inner join and an outer join? 
+
+*An inner join will include only records from both the left and right tables that meet the join condition. An outer join will include all records from both tables.*
+
+
+
+5c. When would you use rank?  What about dense_rank? 
+
+*Dense rank should be used whenever the analysis requires consecutive ranking values, even across records with the same rank.*
+
+
+5d. When would you use a subquery in a select?
+
+
+
+5e. When would you use a right join?
+
+*A right join should be used when the results of the query should include all records from the right table.*
+
+
+
+5f. When would you use an inner join over an outer join?
+
+*An inner join should be used when you want to constrain records according to records in another table. Outer join should be used when you want to retain records from both tables.*
+
+
+
+5g. What’s the difference between a left outer and a left join? 
+
+*These are the same.*
+
+
+
+5h. When would you use a group by? 
+
+*Group by should be used whenever you are applying aggregate functions and you want to express the value of that function in terms of a column or set of columns in the group by clause.*
+
+
+
+5i. Describe how you would do data reformatting?
+
+*Data can be reformatted in SQL using string methods.*
+
+
+
+5j. When would you use a with clause?
+
+*A with clause creates a common table expression (CTE), which is like a view that exists only for the duration of the query.*
+
+
+
+5k. When would you use a self join?
+
+*A self join joins a table to itself, it allows you to compare values within a single table. A good use of this would be to count occurrences of values in a given table.*
+
 
 
 6a. Use a JOIN to display the first and last names, as well as the address, of each staff member. Use the tables staff and address:
